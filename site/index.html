@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Peladinha da Cidade</title>
-    <link rel="stylesheet" href="style1.css">
+    <!-- dentro de site/index.html -->
+    <link rel="stylesheet" href="/site/style1.css">
+    <script src="/site/site.js" defer></script>
     <link rel="stylesheet" href="../site/responsivo.css">
 </head>
 
@@ -57,33 +59,10 @@
 
     <!-- CARTOLA -->
     <div class="tab-content" id="cartola">
-        <div class="subtabs">
-            <div class="subtab active" data-subtab="meu-time">Meu Time</div>
-            <div class="subtab" data-subtab="classificacao">Classificação</div>
-        </div>
-
-        <!-- MEU TIME -->
-        <div class="subtab-content active" id="meu-time">
-            <h2 id="teamInfo">Nenhum time criado</h2>
-            <button onclick="criarTime()">Criar Meu Time</button>
-            <div class="field" id="cartolaFormation"></div>
-        </div>
-
-        <!-- CLASSIFICAÇÃO -->
-        <div class="subtab-content" id="classificacao">
-            <h2>Classificação Geral</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Técnico</th>
-                        <th>Pontos</th>
-                    </tr>
-                </thead>
-                <tbody id="ranking"></tbody>
-            </table>
-        </div>
+        <h2>Cartola</h2>
+        <p style="font-size: 18px; color: #666; margin-top: 20px;">Em breve...</p>
     </div>
+
 
     <!-- POPUP ÚNICO -->
     <div class="popup" id="popup">
