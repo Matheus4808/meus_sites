@@ -30,8 +30,8 @@ app.get("/painel", (req, res) => {
 });
 
 // Caminhos dos arquivos JSON
-const jogadoresFile = path.join(__dirname, "data/jogadores.json");
-const ultimaPeladinhaFile = path.join(__dirname, "data/ultimaPeladinha.json");
+const jogadoresFile = path.join(process.cwd(), "data/jogadores.json");
+const ultimaPeladinhaFile = path.join(process.cwd(), "data/ultimaPeladinha.json");
 
 // Utilitário para ler JSON
 function readJSON(file) {
