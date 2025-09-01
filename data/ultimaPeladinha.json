@@ -1,0 +1,59 @@
+{
+    "melhorGoleiro": {
+        "nome": "Matheus",
+        "overall": 90,
+        "idade": 25,
+        "jogos": 50,
+        "assistencia": 10,
+        "posicao": "GOL",
+        "altura": "1.65m",
+        "gols": 1,
+        "notaUltimoJogo": 9.0
+    },
+    "destaques": [
+        {
+            "nome": "Geraldo",
+            "overall": 89,
+            "idade": 26,
+            "jogos": 60,
+            "assistencia": 20,
+            "posicao": "ATA",
+            "altura": "1.82m",
+            "gols": 30,
+            "notaUltimoJogo": 9.5
+        },
+        {
+            "nome": "Lucas",
+            "overall": 87,
+            "idade": 24,
+            "jogos": 55,
+            "assistencia": 12,
+            "posicao": "MEI",
+            "altura": "1.70m",
+            "gols": 15,
+            "notaUltimoJogo": 8.7
+        },
+        {
+            "nome": "Thylon",
+            "overall": 82,
+            "idade": 28,
+            "jogos": 90,
+            "assistencia": 7,
+            "posicao": "MEI",
+            "altura": "1.77m",
+            "gols": 12,
+            "notaUltimoJogo": 8.6
+        },
+        {
+            "nome": "Vargal",
+            "overall": 88,
+            "idade": 27,
+            "jogos": 70,
+            "assistencia": 5,
+            "posicao": "DEF",
+            "altura": "1.63m",
+            "gols": 2,
+            "notaUltimoJogo": 8.5
+        }
+    ]
+}

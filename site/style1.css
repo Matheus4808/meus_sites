@@ -1,0 +1,272 @@
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+}
+
+h1 {
+    text-align: center;
+    padding: 20px;
+    font-size: 2rem;
+    background: linear-gradient(90deg, #00ffcc, #0077ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    background: #111;
+    border-bottom: 2px solid #222;
+}
+
+.tab {
+    padding: 15px 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.tab.active {
+    border-bottom: 3px solid #00ffcc;
+    color: #00ffcc;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* LISTA JOGADORES */
+.filter {
+    margin-bottom: 15px;
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    width: 100%;
+    max-width: 300px;
+}
+
+.player-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.player-item {
+    background: #222;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.player-item:hover {
+    background: #333;
+}
+
+/* POPUP */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #111;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    display: none;
+    gap: 20px;
+    z-index: 1000;
+}
+
+.popup .card {
+    min-width: 100px;
+    background: linear-gradient(180deg, #ffe600, #cc9a00);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+}
+
+.popup .details {
+    flex: 1;
+}
+
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+/* CAMPO 
+.field {
+    display: flex;
+    left: 30%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 70vh;
+    width: 60vh;
+    background: #006400;
+    border: 5px solid #fff;
+    border-radius: 15px;
+    position: relative;
+    padding: 20px 0;
+}
+
+.field::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40%;
+    height: 40%;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+} */
+
+.field {
+    display: flex;
+    background-image: url('../imagens/fundo1.PNG');
+    background-size: contain;
+    /* aumenta o tamanho da imagem */
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-top: 50px;
+    transform: translateY(20px);
+    min-height: 10vh;
+    padding: 90px 80px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 999;
+}
+
+
+
+.line-goleiro {
+    display: flex;
+    justify-content: center;
+    margin-left: 10px;
+    margin-top: 40px;
+    transform: translateY(-180px);
+    gap: 40px;
+    width: 70%;
+}
+
+.line-defesa {
+    display: flex;
+    justify-content: center;
+    margin-left: 10px;
+    margin-top: 20px;
+    transform: translateY(-140px);
+    gap: 40px;
+    width: 70%;
+    z-index: 1;
+}
+
+.line-ala {
+    display: flex;
+    justify-content: center;
+    margin-left: 10px;
+    margin-top: 30px;
+    transform: translateY(-180px);
+    gap: 150px;
+    width: 70%;
+    z-index: 1;
+}
+
+.line-ataque {
+    display: flex;
+    justify-content: center;
+    margin-left: 10px;
+    transform: translateY(-180px);
+    gap: 40px;
+    width: 70%;
+    z-index: 1;
+}
+
+/* Cards estilo FIFA */
+.player-card {
+    width: 70px;
+    height: 110px;
+    background: linear-gradient(180deg, #ffe600, #cc9a00);
+    border-radius: 12px;
+    padding: 8px;
+    text-align: center;
+    font-size: 0.8rem;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.player-card .overall {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.player-card .pos {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+/* TABELA ESTATÍSTICAS */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    text-align: center;
+}
+
+th {
+    cursor: pointer;
+    background: #111;
+    transition: 0.2s;
+}
+
+th:hover {
+    background: #222;
+    color: #00ffcc;
+}
+
+tr:hover {
+    background: #1a1a1a;
+}
+
+/* Abas dentro do Cartola */
+.subtabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: #111;
+}
+
+.subtab {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.subtab.active {
+    border-bottom: 2px solid #00ffcc;
+    color: #00ffcc;
+}
+
+.cartolaFormation {
+    display: flex;
+}

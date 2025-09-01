@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Peladinha da Cidade</title>
+    <link rel="stylesheet" href="style1.css">
+    <link rel="stylesheet" href="../site/responsivo.css">
+</head>
+
+<body>
+
+    <h1>Peladinha da Cidade</h1>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="jogadores">Jogadores Inscritos</div>
+        <div class="tab" data-tab="time">Time da Peladinha</div>
+        <div class="tab" data-tab="estatisticas">Estatísticas</div>
+        <div class="tab" data-tab="cartola">Cartola</div>
+    </div>
+
+    <!-- LISTA JOGADORES -->
+    <div class="tab-content active" id="jogadores">
+        <h2>Lista de Jogadores</h2>
+        <input type="text" class="filter" placeholder="Filtrar por nome...">
+        <div class="player-list" id="playerList"></div>
+    </div>
+
+    <!-- TIME DA PELADINHA -->
+    <div class="tab-content" id="time">
+        <h2>Time da Peladinha da semana</h2>
+        <div class="formation">
+            <div class="line-goleiro" id="lineGoleiro"></div>
+            <div class="line-defesa" id="lineDefesa"></div>
+            <div class="line-ala" id="lineAla"></div>
+            <div class="line-ataque" id="lineAtaque"></div>
+        </div>
+        <div class="field" id="formation"></div>
+    </div>
+
+    <!-- ESTATÍSTICAS -->
+    <div class="tab-content" id="estatisticas">
+        <h2>Estatísticas da Peladinha</h2>
+        <table id="statsTable">
+            <thead>
+                <tr>
+                    <th data-col="nome">Nome</th>
+                    <th data-col="posicao">Pos</th>
+                    <th data-col="overall">Overall</th>
+                    <th data-col="gols">Gols</th>
+                    <th data-col="jogos">Jogos</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- CARTOLA -->
+    <div class="tab-content" id="cartola">
+        <div class="subtabs">
+            <div class="subtab active" data-subtab="meu-time">Meu Time</div>
+            <div class="subtab" data-subtab="classificacao">Classificação</div>
+        </div>
+
+        <!-- MEU TIME -->
+        <div class="subtab-content active" id="meu-time">
+            <h2 id="teamInfo">Nenhum time criado</h2>
+            <button onclick="criarTime()">Criar Meu Time</button>
+            <div class="field" id="cartolaFormation"></div>
+        </div>
+
+        <!-- CLASSIFICAÇÃO -->
+        <div class="subtab-content" id="classificacao">
+            <h2>Classificação Geral</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Técnico</th>
+                        <th>Pontos</th>
+                    </tr>
+                </thead>
+                <tbody id="ranking"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- POPUP ÚNICO -->
+    <div class="popup" id="popup">
+        <div class="popup-close" id="closePopup">✖</div>
+        <h2 id="popupTitle">Informações do Jogador</h2>
+
+        <!-- Card com info -->
+        <div class="card">
+            <div class="overall" id="popupOverall"></div>
+            <div class="pos" id="popupPos"></div>
+            <div class="name" id="popupName"></div>
+        </div>
+        <div class="details">
+            <p><b>Idade:</b> <span id="popupIdade"></span></p>
+            <p><b>Jogos:</b> <span id="popupJogos"></span></p>
+            <p><b>Gols:</b> <span id="popupGols"></span></p>
+            <p><b>Assistências:</b> <span id="popupAssistencia"></span></p>
+            <p><b>Altura:</b> <span id="popupAltura"></span></p>
+            <p><b>Nota Último Jogo:</b> <span id="popupNota"></span></p>
+        </div>
+
+        <!-- Lista de escolha (quando escalando no Cartola) -->
+        <div id="popupEscolha">
+            <h3>Escolha um jogador:</h3>
+            <ul id="playerOptions"></ul>
+        </div>
+    </div>
+
+    <script src="script1.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" <title>Peladinha da Cidade</title>
+</head>
+
+<body>
+
+    <h1>Peladinha da Cidade ⚽</h1>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="time">Time da Peladinha</div>
+        <div class="tab" data-tab="jogadores">Jogadores Inscritos</div>
+        <div class="tab" data-tab="estatisticas">Estatísticas</div>
+        <div class="tab" data-tab="cartola">Cartola</div>
+    </div>
+
+    <!-- TIME 1-3-1 -->
+    <div class="tab-content active" id="time">
+        <h2>Formação 1-3-1 🔥</h2>
+        <div class="formation">
+            <div class="player-card gol">
+                <div class="overall">91</div>
+                <div class="pos">GOL</div>
+                <div class="name">Matheus</div>
+            </div>
+            <div class="player-card def1">
+                <div class="overall">85</div>
+                <div class="pos">ALA</div>
+                <div class="name">Pedro</div>
+            </div>
+            <div class="player-card def2">
+                <div class="overall">87</div>
+                <div class="pos">DEF</div>
+                <div class="name">Lucas</div>
+            </div>
+            <div class="player-card def3">
+                <div class="overall">88</div>
+                <div class="pos">ALA</div>
+                <div class="name">Marcos</div>
+            </div>
+            <div class="player-card ata">
+                <div class="overall">89</div>
+                <div class="pos">ATA</div>
+                <div class="name">João</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LISTA JOGADORES -->
+    <div class="tab-content" id="jogadores">
+        <h2>Lista de Jogadores</h2>
+        <input type="text" class="filter" placeholder="Filtrar por nome...">
+        <div class="player-list">
+            <div class="player-item" data-name="Matheus" data-pos="GOL" data-time="Pelada FC" data-gols="10"
+                data-assist="2" data-titulos="3" data-altura="1.85">
+                Matheus (GOL) - Overall 91
+            </div>
+            <div class="player-item" data-name="Marcos" data-pos="DEF" data-time="Pelada FC" data-gols="2"
+                data-assist="1" data-titulos="1" data-altura="1.78">
+                Marcos (DEF) - Overall 88
+            </div>
+            <div class="player-item" data-name="Pedro" data-pos="ZAG" data-time="Rua 7" data-gols="1" data-assist="0"
+                data-titulos="2" data-altura="1.90">
+                Pedro (ZAG) - Overall 85
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="estatisticas">
+        <h2>Estatísticas</h2>
+        <p>(Aqui você poderá filtrar e ver médias de gols, títulos, etc...)</p>
+    </div>
+
+    <div class="tab-content" id="cartola">
+        <h2>Cartola (em breve...)</h2>
+    </div>
+
+    <!-- POPUP -->
+    <div class="popup" id="popup">
+        <div class="popup-close" id="closePopup">✖</div>
+        <div class="card">
+            <div class="overall">91</div>
+            <div class="pos">GOL</div>
+            <div class="name">Matheus</div>
+        </div>
+        <div class="details">
+            <h3 id="popupName"></h3>
+            <p><b>Time: N/A</b> <span id="popupTime"></span></p>
+            <p><b>Títulos: 6</b> <span id="popupTitulos"></span></p>
+            <p><b>Gols: 2</b> <span id="popupGols"></span></p>
+            <p><b>Assistências: 25</b> <span id="popupAssist"></span></p>
+            <p><b>Posição: GOL</b> <span id="popupPos"></span></p>
+            <p><b>Altura: 1.66</b> <span id="popupAltura"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Troca de abas
+        const tabs = document.querySelectorAll(".tab");
+        const contents = document.querySelectorAll(".tab-content");
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
+                contents.forEach(c => c.classList.remove("active"));
+                document.getElementById(tab.dataset.tab).classList.add("active");
+            });
+        });
+
+        // Popup
+        const players = document.querySelectorAll(".player-item");
+        const popup = document.getElementById("popup");
+        const closePopup = document.getElementById("closePopup");
+        players.forEach(player => {
+            player.addEventListener("click", () => {
+                document.getElementById("popupName").innerText = player.dataset.name;
+                document.getElementById("popupTime").innerText = player.dataset.time;
+                document.getElementById("popupTitulos").innerText = player.dataset.titulos;
+                document.getElementById("popupGols").innerText = player.dataset.gols;
+                document.getElementById("popupAssist").innerText = player.dataset.assist;
+                document.getElementById("popupPos").innerText = player.dataset.pos;
+                document.getElementById("popupAltura").innerText = player.dataset.altura;
+                popup.style.display = "flex";
+            });
+        });
+        closePopup.addEventListener("click", () => {
+            popup.style.display = "none";
+        });
+    </script>
+</body>
+
+</html>

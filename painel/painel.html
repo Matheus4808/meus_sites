@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel Administrativo - Peladinha</title>
+  <link rel="stylesheet" href="../painel/painel.css" />
+  <link rel="stylesheet" href="../painel/painel-responsivo.css" />
+  <style>
+    /* incrementos rápidos (opcional) */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .muted {
+      color: #666;
+      font-size: 12px;
+    }
+
+    .formation {
+      position: relative;
+      background: #0b3a21;
+      border-radius: 12px;
+      height: 460px;
+      margin-top: 14px;
+      overflow: hidden;
+    }
+
+    .line-goleiro,
+    .line-defesa,
+    .line-ala,
+    .line-ataque {
+      position: absolute;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .line-goleiro {
+      top: 78%;
+      gap: 40px;
+    }
+
+    .line-defesa {
+      top: 60%;
+      gap: 40px;
+    }
+
+    .line-ala {
+      top: 38%;
+      gap: 120px;
+    }
+
+    .line-ataque {
+      top: 18%;
+      gap: 40px;
+    }
+
+    .player-card {
+      background: #111;
+      color: #fff;
+      border: 2px solid #00ffcc;
+      border-radius: 12px;
+      padding: 10px 12px;
+      text-align: center;
+      min-width: 120px;
+    }
+
+    .player-card .overall {
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eee;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+  <div id="loginScreen">
+    <h2>Login do Administrador</h2>
+    <input type="password" id="adminPassword" placeholder="Digite a senha" />
+    <button id="btnLogin">Entrar</button>
+    <p id="loginError" style="color:red;display:none;">Senha incorreta!</p>
+  </div>
+
+  <!-- PAINEL -->
+  <div id="adminPanel" style="display:none;">
+    <h1>Painel da Peladinha ⚽</h1>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="jogadores">Jogadores</div>
+      <div class="tab" data-tab="novoJogador">Novo/Editar Jogadores</div>
+      <div class="tab" data-tab="peladinha">Última Peladinha</div>
+      <div class="tab" data-tab="timeSemana">Time da Peladinha</div>
+    </div>
+
+    <!-- JOGADORES -->
+    <div class="tab-content active" id="jogadores">
+      <h2>Jogadores Inscritos</h2>
+      <input id="buscaJogador" placeholder="Buscar por nome/posição..." />
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Posição</th>
+            <th>Overall</th>
+            <th>Nota Últ. Jogo</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="listaJogadores"></tbody>
+      </table>
+      <p class="muted">Dica: clique em “Editar” para ajustar dados do jogador.</p>
+    </div>
+
+    <!-- NOVO/EDITAR JOGADORES -->
+    <div class="tab-content" id="novoJogador">
+      <h2>Novo/Editar Jogador</h2>
+      <div>
+        <input id="fNome" placeholder="Nome" />
+        <input id="fPosicao" placeholder="Posição (GOL, DEF, ZAG, MEI, ATA)" />
+        <input id="fOverall" type="number" placeholder="Overall" />
+        <input id="fIdade" type="number" placeholder="Idade" />
+        <input id="fAltura" placeholder="Altura (ex: 1.78m)" />
+        <div class="grid-2">
+          <input id="fJogos" type="number" placeholder="Jogos" />
+          <input id="fNota" type="number" step="0.1" placeholder="Nota Último Jogo" />
+          <input id="fGols" type="number" placeholder="Gols" />
+          <input id="fAssist" type="number" placeholder="Assistências" />
+          <input id="fTitulos" type="number" placeholder="Títulos" />
+        </div>
+        <div>
+          <button id="btnSalvarJogador">Salvar</button>
+          <button id="btnLimparJogador" style="background:#6c757d;">Limpar</button>
+        </div>
+        <input type="hidden" id="editIndex" />
+      </div>
+    </div>
+
+    <!-- ULTIMA PELADINHA -->
+    <div class="tab-content" id="peladinha">
+      <h2>Registrar Estatísticas da Última Peladinha</h2>
+      <div class="grid-2">
+        <div>
+          <label>Jogador</label>
+          <select id="jogadorSelect"></select>
+          <div class="grid-2">
+            <input type="number" id="gols" placeholder="Gols" />
+            <input type="number" id="assistencias" placeholder="Assistências" />
+            <input type="number" id="titulos" placeholder="Títulos" />
+            <input type="number" step="0.1" id="nota" placeholder="Nota do Jogo" />
+          </div>
+          <button id="btnAddEstatistica">Adicionar/Atualizar</button>
+        </div>
+        <div>
+          <label>Data da Peladinha</label>
+          <input type="date" id="dataPeladinha" />
+          <button id="btnSalvarRodada">Salvar Rodada</button>
+          <p class="muted">Ao salvar, as estatísticas serão aplicadas nos jogadores e a rodada será gravada no
+            <code>ultimaPeladinha.json</code>.
+          </p>
+        </div>
+      </div>
+
+      <h3>Estatísticas da Rodada (não salvas ainda)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Jogador</th>
+            <th>Gols</th>
+            <th>Assist.</th>
+            <th>Títulos</th>
+            <th>Nota</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="listaEstatisticas"></tbody>
+      </table>
+    </div>
+
+    <!-- TIME DA SEMANA -->
+    <div class="tab-content" id="timeSemana">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <h2 style="margin:0;">Time da Peladinha (1–3–1)</h2>
+        <button id="btnRecalcular">Recalcular</button>
+      </div>
+      <div class="formation" id="formation">
+        <div class="line-goleiro" id="lineGoleiro"></div>
+        <div class="line-defesa" id="lineDefesa"></div>
+        <div class="line-ala" id="lineAla"></div>
+        <div class="line-ataque" id="lineAtaque"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../painel/painel.js"></script>
+</body>
+
+</html>
