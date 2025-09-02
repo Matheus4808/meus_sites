@@ -1,16 +1,20 @@
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
-const { Pool } = require("pg");
-require("dotenv").config(); // para usar .env localmente
+const mysql = require("mysql2/promise"); // Usando promise para async/await
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Conexão com PostgreSQL
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }, // Render exige SSL
+// Conexão com MySQL
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASS || "SUA_SENHA",
+  database: process.env.DB_NAME || "peladinha",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
 app.use(cors());
@@ -18,90 +22,77 @@ app.use(express.json());
 
 // 🔹 Serve arquivos estáticos
 app.use(express.static(path.join(__dirname, "../public")));
-app.use("/static", express.static(path.join(__dirname, "../home")));
+app.use("/static", express.static(path.join(__dirname, "../public/home")));
 app.use("/site", express.static(path.join(__dirname, "../site")));
 app.use("/painel", express.static(path.join(__dirname, "../painel")));
 app.use("/imagens", express.static(path.join(__dirname, "../imagens")));
 
 // 🔹 Quando acessar "/", envia o home.html
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../home/home.html"));
+  res.sendFile(path.join(__dirname, "../public/home/home.html"));
 });
 
-// Rotas para páginas específicas
-app.get("/site", (req, res) => {
-  res.sendFile(path.join(__dirname, "../site/index.html"));
-});
+// ========================= CRUD JOGADORES ========================= //
 
-app.get("/painel", (req, res) => {
-  res.sendFile(path.join(__dirname, "../painel/painel.html"));
-});
-
-// ========================= ROTAS COM POSTGRES ========================= //
-
-// Buscar jogadores
+// ➡️ Ler todos os jogadores
 app.get("/jogadores", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM jogadores ORDER BY id");
-    res.json(result.rows);
+    const [rows] = await pool.query("SELECT * FROM jogadores ORDER BY id");
+    res.json(rows);
   } catch (err) {
     console.error("Erro ao buscar jogadores:", err);
     res.status(500).json({ error: "Erro ao buscar jogadores" });
   }
 });
 
-// Atualizar jogadores (substitui todos)
-app.put("/jogadores", async (req, res) => {
+// ➡️ Adicionar jogador
+app.post("/jogadores", async (req, res) => {
   try {
-    const jogadores = req.body;
-
-    // Limpa tabela
-    await pool.query("DELETE FROM jogadores");
-
-    // Reinsere
-    for (const j of jogadores) {
-      await pool.query(
-        "INSERT INTO jogadores (nome, posicao, numero) VALUES ($1, $2, $3)",
-        [j.nome, j.posicao, j.numero]
-      );
-    }
-
-    res.json({ msg: "Jogadores atualizados com sucesso!" });
-  } catch (err) {
-    console.error("Erro ao atualizar jogadores:", err);
-    res.status(500).json({ error: "Erro ao atualizar jogadores" });
-  }
-});
-
-// Buscar última peladinha (último registro)
-app.get("/ultimaPeladinha", async (req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM ultima_peladinha ORDER BY id DESC LIMIT 1"
-    );
-    res.json(result.rows[0] || {});
-  } catch (err) {
-    console.error("Erro ao buscar última peladinha:", err);
-    res.status(500).json({ error: "Erro ao buscar última peladinha" });
-  }
-});
-
-// Atualizar última peladinha (mantém só 1 registro)
-app.put("/ultimaPeladinha", async (req, res) => {
-  try {
-    const { data, local, descricao } = req.body;
-
-    await pool.query("DELETE FROM ultima_peladinha");
+    const { nome, overall, idade, jogos, assistencia, posicao, altura, gols, notaUltimoJogo, titulos } = req.body;
 
     await pool.query(
-      "INSERT INTO ultima_peladinha (data, local, descricao) VALUES ($1, $2, $3)",
-      [data, local, descricao]
+      `INSERT INTO jogadores 
+      (nome, overall, idade, jogos, assistencia, posicao, altura, gols, notaUltimoJogo, titulos) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [nome, overall, idade, jogos, assistencia, posicao, altura, gols, notaUltimoJogo, titulos]
     );
 
-    res.json({ msg: "Última peladinha atualizada com sucesso!" });
+    res.json({ msg: "Jogador adicionado com sucesso!" });
   } catch (err) {
-    console.error("Erro ao atualizar última peladinha:", err);
-    res.status(500).json({ error: "Erro ao atualizar última peladinha" });
+    console.error("Erro ao adicionar jogador:", err);
+    res.status(500).json({ error: "Erro ao adicionar jogador" });
+  }
+});
+
+// ➡️ Editar jogador
+app.put("/jogadores/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nome, overall, idade, jogos, assistencia, posicao, altura, gols, notaUltimoJogo, titulos } = req.body;
+
+    await pool.query(
+      `UPDATE jogadores 
+      SET nome=?, overall=?, idade=?, jogos=?, assistencia=?, posicao=?, altura=?, gols=?, notaUltimoJogo=?, titulos=? 
+      WHERE id=?`,
+      [nome, overall, idade, jogos, assistencia, posicao, altura, gols, notaUltimoJogo, titulos, id]
+    );
+
+    res.json({ msg: "Jogador atualizado com sucesso!" });
+  } catch (err) {
+    console.error("Erro ao atualizar jogador:", err);
+    res.status(500).json({ error: "Erro ao atualizar jogador" });
+  }
+});
+
+// ➡️ Deletar jogador
+app.delete("/jogadores/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query("DELETE FROM jogadores WHERE id = ?", [id]);
+    res.json({ msg: "Jogador deletado com sucesso!" });
+  } catch (err) {
+    console.error("Erro ao deletar jogador:", err);
+    res.status(500).json({ error: "Erro ao deletar jogador" });
   }
 });
 
