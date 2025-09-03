@@ -1,8 +1,13 @@
 // --- Carregar dados do backend ---
 // npm run dev
 async function carregarJogadores() {
-    const response = await fetch("http://localhost:3000/jogadores");
-    return await response.json();
+  try {
+    const res = await fetch("/jogadores"); // ⬅️ relativo
+    const jogadores = await res.json();
+    console.log(jogadores);
+  } catch (err) {
+    console.error("Erro ao carregar jogadores:", err);
+  }
 }
 
 async function carregarUltimaPeladinha() {
