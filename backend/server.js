@@ -6,7 +6,7 @@ const mysql = require("mysql2/promise");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 🔹 Conexão com MySQL (Railway ou Local)
+// 🔹 Conexão com MySQL
 const pool = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
@@ -22,20 +22,20 @@ app.use(cors());
 app.use(express.json());
 
 // 🔹 Serve arquivos estáticos
+// Public serve toda a pasta public
 app.use(express.static(path.join(__dirname, "../public")));
-app.use("/static", express.static(path.join(__dirname, "../public/home")));
+
+// Opcional: atalhos para pastas específicas
 app.use("/site", express.static(path.join(__dirname, "../site")));
 app.use("/painel", express.static(path.join(__dirname, "../painel")));
 app.use("/imagens", express.static(path.join(__dirname, "../imagens")));
 
-// 🔹 Página inicial
+// 🔹 Rota principal
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/home/home.html"));
 });
 
-// ========================= CRUD JOGADORES ========================= //
-
-// ➡️ Ler todos os jogadores
+// 🔹 CRUD jogadores (mesmo que já tinha)
 app.get("/jogadores", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM jogadores ORDER BY id");
