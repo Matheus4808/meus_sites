@@ -1,17 +1,18 @@
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
-const mysql = require("mysql2/promise"); // Usando promise para async/await
+const mysql = require("mysql2/promise");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Conexão com MySQL
+// 🔹 Conexão com MySQL (Railway ou Local)
 const pool = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
-  password: process.env.DB_PASS || "SUA_SENHA",
+  password: process.env.DB_PASS || "",
   database: process.env.DB_NAME || "peladinha",
+  port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -27,7 +28,7 @@ app.use("/site", express.static(path.join(__dirname, "../site")));
 app.use("/painel", express.static(path.join(__dirname, "../painel")));
 app.use("/imagens", express.static(path.join(__dirname, "../imagens")));
 
-// 🔹 Quando acessar "/", envia o home.html
+// 🔹 Página inicial
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/home/home.html"));
 });
