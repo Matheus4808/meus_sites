@@ -144,40 +144,43 @@ const fAssist = document.getElementById("fAssist");
 const fTitulos = document.getElementById("fTitulos");
 const editIndex = document.getElementById("editIndex");
 
-document.getElementById("btnSalvarJogador").addEventListener("click", async () => {
-    const novo = {
-        nome: fNome.value.trim(),
-        posicao: fPosicao.value.trim().toUpperCase(),
-        overall: toInt(fOverall.value),
-        idade: toInt(fIdade.value),
-        altura: fAltura.value.trim(),
-        jogos: toInt(fJogos.value),
-        notaUltimoJogo: toFloat(fNota.value),
-        gols: toInt(fGols.value),
-        assistencia: toInt(fAssist.value),
-        titulos: toInt(fTitulos.value),
+document.getElementById("btnSalvarRodada").addEventListener("click", async () => {
+    const data = document.getElementById("dataPeladinha").value || new Date().toISOString().slice(0, 10);
+    rodadaData = data;
+
+    const estatArray = Object.entries(estatisticasRodada).map(([nome, s]) => ({
+        nome,
+        gols: s.gols || 0,
+        assistencias: s.assistencias || 0,
+        titulos: s.titulos || 0,
+        nota: s.nota || 0
+    }));
+
+    const jogadoresNota = jogadores
+        .filter(j => typeof j.notaUltimoJogo === "number")
+        .sort((a, b) => (b.notaUltimoJogo || 0) - (a.notaUltimoJogo || 0));
+
+    const melhorGoleiro = jogadoresNota.find(j => j.posicao === "GOL")?.nome || null;
+    const destaquesLinha = jogadoresNota.filter(j => j.posicao !== "GOL").slice(0, 4).map(j => j.nome);
+
+    const ultima = {
+        data,
+        melhorGoleiro,
+        destaques: destaquesLinha,
+        estatisticas: estatArray
     };
-    if (!novo.nome || !novo.posicao) {
-        alert("Nome e posição são obrigatórios.");
-        return;
-    }
 
-    const idx = editIndex.value ? parseInt(editIndex.value, 10) : -1;
-    if (idx >= 0) {
-        // Jogador já existe → PUT
-        const id = jogadores[idx].id;
-        await apiPut(`/jogadores/${id}`, novo);
-    } else {
-        // Novo jogador → POST
-        await apiPost("/jogadores", novo);
-    }
+    await apiPut("/ultimaPeladinha", ultima);
 
+    alert("Rodada salva e jogadores atualizados!");
+
+    // recarregar lista de jogadores do banco (com stats já somadas pelo backend)
     jogadores = await apiGet("/jogadores");
     renderJogadores();
     preencherSelectJogadores();
-    limparFormJogador();
-    alert("Jogador salvo com sucesso!");
+    calcularTimeSemana();
 });
+
 
 
 document.getElementById("btnLimparJogador").addEventListener("click", limparFormJogador);

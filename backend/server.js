@@ -95,7 +95,7 @@ app.delete("/jogadores/:id", async (req, res) => {
 
 // ===================== Última Peladinha ===================== //
 
-// 🔹 Salvar rodada
+// 🔹 Salvar rodada + atualizar jogadores
 app.put("/ultimaPeladinha", async (req, res) => {
   const conn = await pool.getConnection();
   try {
@@ -110,18 +110,31 @@ app.put("/ultimaPeladinha", async (req, res) => {
     );
     const peladinhaId = result.insertId;
 
-    // salva estatísticas
+    // salva estatísticas + atualiza jogadores
     for (const s of estatisticas) {
+      // salva estatísticas da rodada
       await conn.query(
         `INSERT INTO estatisticas_peladinha 
          (peladinha_id, nome, gols, assistencias, titulos, nota)
          VALUES (?, ?, ?, ?, ?, ?)`,
         [peladinhaId, s.nome, s.gols, s.assistencias, s.titulos, s.nota]
       );
+
+      // atualiza tabela jogadores
+      await conn.query(
+        `UPDATE jogadores
+         SET jogos = jogos + 1,
+             gols = gols + ?,
+             assistencia = assistencia + ?,
+             titulos = titulos + ?,
+             notaUltimoJogo = ?
+         WHERE nome = ?`,
+        [s.gols, s.assistencias, s.titulos, s.nota, s.nome]
+      );
     }
 
     await conn.commit();
-    res.json({ msg: "Rodada salva com sucesso!" });
+    res.json({ msg: "Rodada salva e jogadores atualizados com sucesso!" });
   } catch (err) {
     await conn.rollback();
     console.error("Erro ao salvar rodada:", err);
@@ -130,6 +143,7 @@ app.put("/ultimaPeladinha", async (req, res) => {
     conn.release();
   }
 });
+
 
 // 🔹 Buscar última rodada
 app.get("/ultimaPeladinha", async (req, res) => {
