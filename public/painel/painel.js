@@ -1,6 +1,9 @@
 // ===== CONFIG =====
-const API_BASE = "http://localhost:3000";
-const SENHA = "admin123"; // simples para começar
+const API_BASE = window.location.origin.includes("localhost")
+  ? "http://localhost:3000"
+  : "https://db-peladinha.onrender.com";
+
+const SENHA = "palmasleague4321"; // simples para começar
 
 // ===== STATE =====
 let jogadores = [];
