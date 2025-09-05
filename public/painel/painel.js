@@ -38,6 +38,15 @@ async function apiGet(path) {
     if (!r.ok) throw new Error(`GET ${path} falhou`);
     return await r.json();
 }
+async function apiPost(path, body) {
+    const r = await fetch(`${API_BASE}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    });
+    if (!r.ok) throw new Error(`POST ${path} falhou`);
+    return await r.json();
+}
 async function apiPut(path, body) {
     const r = await fetch(`${API_BASE}${path}`, {
         method: "PUT",
@@ -47,6 +56,12 @@ async function apiPut(path, body) {
     if (!r.ok) throw new Error(`PUT ${path} falhou`);
     return await r.json();
 }
+async function apiDelete(path) {
+    const r = await fetch(`${API_BASE}${path}`, { method: "DELETE" });
+    if (!r.ok) throw new Error(`DELETE ${path} falhou`);
+    return await r.json();
+}
+
 
 // ===== BOOT =====
 async function boot() {
@@ -143,16 +158,24 @@ document.getElementById("btnSalvarJogador").addEventListener("click", async () =
         alert("Nome e posição são obrigatórios.");
         return;
     }
+
     const idx = editIndex.value ? parseInt(editIndex.value, 10) : -1;
     if (idx >= 0) {
-        jogadores[idx] = { ...jogadores[idx], ...novo };
+        // Jogador já existe → PUT
+        const id = jogadores[idx].id;
+        await apiPut(`/jogadores/${id}`, novo);
     } else {
-        jogadores.push(novo);
+        // Novo jogador → POST
+        await apiPost("/jogadores", novo);
     }
-    await persistJogadores();
+
+    jogadores = await apiGet("/jogadores");
+    renderJogadores();
+    preencherSelectJogadores();
     limparFormJogador();
     alert("Jogador salvo com sucesso!");
 });
+
 
 document.getElementById("btnLimparJogador").addEventListener("click", limparFormJogador);
 
@@ -179,9 +202,13 @@ function editarJogador(i) {
 
 async function removerJogador(i) {
     if (!confirm("Remover este jogador?")) return;
-    jogadores.splice(i, 1);
-    await persistJogadores();
+    const id = jogadores[i].id;
+    await apiDelete(`/jogadores/${id}`);
+    jogadores = await apiGet("/jogadores");
+    renderJogadores();
+    preencherSelectJogadores();
 }
+
 
 async function persistJogadores() {
     await apiPut("/jogadores", jogadores);

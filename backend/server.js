@@ -6,7 +6,7 @@ const mysql = require("mysql2/promise");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 🔹 Conexão com MySQL (Railway ou local)
+// 🔹 Conexão com MySQL
 const pool = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
@@ -31,6 +31,7 @@ app.use("/imagens", express.static(path.join(__dirname, "../imagens")));
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/home/home.html"));
 });
+
 
 // ===================== CRUD Jogadores ===================== //
 app.get("/jogadores", async (req, res) => {
@@ -91,23 +92,70 @@ app.delete("/jogadores/:id", async (req, res) => {
   }
 });
 
-// ===================== Rota Última Peladinha ===================== //
-// 🔹 Aqui você pode montar lógica real. Exemplo básico:
+
+// ===================== Última Peladinha ===================== //
+
+// 🔹 Salvar rodada
+app.put("/ultimaPeladinha", async (req, res) => {
+  const conn = await pool.getConnection();
+  try {
+    const { data, melhorGoleiro, destaques, estatisticas } = req.body;
+
+    await conn.beginTransaction();
+
+    // salva rodada
+    const [result] = await conn.query(
+      "INSERT INTO peladinhas (data, melhorGoleiro, destaques) VALUES (?, ?, ?)",
+      [data, melhorGoleiro, JSON.stringify(destaques)]
+    );
+    const peladinhaId = result.insertId;
+
+    // salva estatísticas
+    for (const s of estatisticas) {
+      await conn.query(
+        `INSERT INTO estatisticas_peladinha 
+         (peladinha_id, nome, gols, assistencias, titulos, nota)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [peladinhaId, s.nome, s.gols, s.assistencias, s.titulos, s.nota]
+      );
+    }
+
+    await conn.commit();
+    res.json({ msg: "Rodada salva com sucesso!" });
+  } catch (err) {
+    await conn.rollback();
+    console.error("Erro ao salvar rodada:", err);
+    res.status(500).json({ error: "Erro ao salvar rodada" });
+  } finally {
+    conn.release();
+  }
+});
+
+// 🔹 Buscar última rodada
 app.get("/ultimaPeladinha", async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM jogadores ORDER BY RAND() LIMIT 5");
+    const [rows] = await pool.query("SELECT * FROM peladinhas ORDER BY id DESC LIMIT 1");
+    if (rows.length === 0) return res.json({});
 
-    const resposta = {
-      melhorGoleiro: rows[0],
-      destaques: rows.slice(1, 5),
-    };
+    const peladinha = rows[0];
+    const [estatisticas] = await pool.query(
+      "SELECT * FROM estatisticas_peladinha WHERE peladinha_id = ?",
+      [peladinha.id]
+    );
 
-    res.json(resposta);
+    res.json({
+      id: peladinha.id,
+      data: peladinha.data,
+      melhorGoleiro: peladinha.melhorGoleiro,
+      destaques: JSON.parse(peladinha.destaques || "[]"),
+      estatisticas,
+    });
   } catch (err) {
     console.error("Erro ao buscar última peladinha:", err);
     res.status(500).json({ error: "Erro ao buscar última peladinha" });
   }
 });
+
 
 // ========================================================= //
 
