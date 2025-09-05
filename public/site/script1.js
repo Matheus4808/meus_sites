@@ -74,23 +74,35 @@ function montarTime(ultimaPeladinha, jogadores) {
   const formation = document.getElementById("formation");
   formation.innerHTML = "";
 
-  if (!ultimaPeladinha) return;
+  if (!ultimaPeladinha || !ultimaPeladinha.estatisticas) return;
 
-  // procurar jogadores completos
-  function findJogador(nome) {
-    return jogadores.find(j => j.nome === nome);
-  }
+  // 🔹 Junta estatísticas + info completa do jogador
+  const estatisticas = ultimaPeladinha.estatisticas.map(e => {
+    const j = jogadores.find(j => j.nome === e.nome);
+    return {
+      ...j,
+      ...e // sobrescreve gols, assistências, nota, etc da última peladinha
+    };
+  });
 
-  const goleiro = ultimaPeladinha.melhorGoleiro ? findJogador(ultimaPeladinha.melhorGoleiro) : null;
-  const destaques = (ultimaPeladinha.destaques || []).map(findJogador);
+  // 🔹 Separa goleiros e jogadores de linha
+  const goleiros = estatisticas.filter(j => j.posicao === "GOL");
+  const linha = estatisticas.filter(j => j.posicao !== "GOL");
 
+  // 🔹 Pega melhor goleiro pela nota
+  const goleiro = goleiros.sort((a, b) => b.nota - a.nota)[0];
+
+  // 🔹 Pega top 4 jogadores de linha pela nota
+  const destaques = linha.sort((a, b) => b.nota - a.nota).slice(0, 4);
+
+  // --- Renderização nos slots ---
   const top = document.createElement("div");
   top.classList.add("line-goleiro");
   if (goleiro) top.appendChild(criarCard(goleiro));
 
   const middle = document.createElement("div");
   middle.classList.add("line-defesa");
-  if (destaques[3]) middle.appendChild(criarCard(destaques[3]));
+  if (destaques[0]) middle.appendChild(criarCard(destaques[0]));
 
   const ala = document.createElement("div");
   ala.classList.add("line-ala");
@@ -99,13 +111,25 @@ function montarTime(ultimaPeladinha, jogadores) {
 
   const bottom = document.createElement("div");
   bottom.classList.add("line-ataque");
-  if (destaques[0]) bottom.appendChild(criarCard(destaques[0]));
+  if (destaques[3]) bottom.appendChild(criarCard(destaques[3]));
 
   formation.appendChild(top);
   formation.appendChild(middle);
   formation.appendChild(ala);
   formation.appendChild(bottom);
 }
+
+function criarCard(j) {
+  const card = document.createElement("div");
+  card.classList.add("player-card");
+  card.innerHTML = `
+    <div class="overall">${j.nota}</div>
+    <div class="pos">${j.posicao}</div>
+    <div class="name">${j.nome}</div>
+  `;
+  return card;
+}
+
 
 
 function criarCard(j) {
