@@ -70,14 +70,19 @@ function renderTabela(lista) {
 }
 
 // --- Montar Time da Peladinha ---
-function montarTime(ultimaPeladinha) {
+function montarTime(ultimaPeladinha, jogadores) {
   const formation = document.getElementById("formation");
   formation.innerHTML = "";
 
-  if (!ultimaPeladinha || !ultimaPeladinha.destaques) return;
+  if (!ultimaPeladinha) return;
 
-  const goleiro = ultimaPeladinha.melhorGoleiro;
-  const destaques = ultimaPeladinha.destaques;
+  // procurar jogadores completos
+  function findJogador(nome) {
+    return jogadores.find(j => j.nome === nome);
+  }
+
+  const goleiro = ultimaPeladinha.melhorGoleiro ? findJogador(ultimaPeladinha.melhorGoleiro) : null;
+  const destaques = (ultimaPeladinha.destaques || []).map(findJogador);
 
   const top = document.createElement("div");
   top.classList.add("line-goleiro");
@@ -102,6 +107,7 @@ function montarTime(ultimaPeladinha) {
   formation.appendChild(bottom);
 }
 
+
 function criarCard(j) {
   const card = document.createElement("div");
   card.classList.add("player-card");
@@ -120,7 +126,7 @@ async function init() {
   renderTabela(jogadores);
 
   const ultimaPeladinha = await carregarUltimaPeladinha();
-  montarTime(ultimaPeladinha);
+  montarTime(ultimaPeladinha, jogadores);
 
   // Ordenação ao clicar no cabeçalho (agora só uma vez e usando jogadores)
   document.querySelectorAll("#statsTable th").forEach(th => {
