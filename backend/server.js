@@ -6,7 +6,7 @@ const mysql = require("mysql2/promise");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 🔹 Conexão com MySQL
+// 🔹 Conexão com MySQL (Railway ou local)
 const pool = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
@@ -21,21 +21,18 @@ const pool = mysql.createPool({
 app.use(cors());
 app.use(express.json());
 
-// 🔹 Serve arquivos estáticos
-// Public serve toda a pasta public
+// 🔹 Arquivos estáticos
 app.use(express.static(path.join(__dirname, "../public")));
-
-// Opcional: atalhos para pastas específicas
 app.use("/site", express.static(path.join(__dirname, "../site")));
 app.use("/painel", express.static(path.join(__dirname, "../painel")));
 app.use("/imagens", express.static(path.join(__dirname, "../imagens")));
 
-// 🔹 Rota principal
+// 🔹 Página inicial
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/home/home.html"));
 });
 
-// 🔹 CRUD jogadores (mesmo que já tinha)
+// ===================== CRUD Jogadores ===================== //
 app.get("/jogadores", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM jogadores ORDER BY id");
@@ -46,7 +43,6 @@ app.get("/jogadores", async (req, res) => {
   }
 });
 
-// ➡️ Adicionar jogador
 app.post("/jogadores", async (req, res) => {
   try {
     const { nome, overall, idade, jogos, assistencia, posicao, altura, gols, notaUltimoJogo, titulos } = req.body;
@@ -65,7 +61,6 @@ app.post("/jogadores", async (req, res) => {
   }
 });
 
-// ➡️ Editar jogador
 app.put("/jogadores/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -85,7 +80,6 @@ app.put("/jogadores/:id", async (req, res) => {
   }
 });
 
-// ➡️ Deletar jogador
 app.delete("/jogadores/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -94,6 +88,24 @@ app.delete("/jogadores/:id", async (req, res) => {
   } catch (err) {
     console.error("Erro ao deletar jogador:", err);
     res.status(500).json({ error: "Erro ao deletar jogador" });
+  }
+});
+
+// ===================== Rota Última Peladinha ===================== //
+// 🔹 Aqui você pode montar lógica real. Exemplo básico:
+app.get("/ultimaPeladinha", async (req, res) => {
+  try {
+    const [rows] = await pool.query("SELECT * FROM jogadores ORDER BY RAND() LIMIT 5");
+
+    const resposta = {
+      melhorGoleiro: rows[0],
+      destaques: rows.slice(1, 5),
+    };
+
+    res.json(resposta);
+  } catch (err) {
+    console.error("Erro ao buscar última peladinha:", err);
+    res.status(500).json({ error: "Erro ao buscar última peladinha" });
   }
 });
 
