@@ -19,6 +19,9 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
+app.use(cors());
+app.use(express.json());
+
 // ===================== LOGIN ===================== //
 app.post("/login", async (req, res) => {
   try {
@@ -42,10 +45,6 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ error: "Erro no login" });
   }
 });
-
-
-app.use(cors());
-app.use(express.json());
 
 // 🔹 Arquivos estáticos
 app.use(express.static(path.join(__dirname, "../public")));
