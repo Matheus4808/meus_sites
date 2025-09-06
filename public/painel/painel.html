@@ -87,13 +87,14 @@
 
 <body>
 
-  <!-- LOGIN -->
   <div id="loginScreen">
-    <h2>Login do Administrador</h2>
-    <input type="password" id="adminPassword" placeholder="Digite a senha" />
+    <h2>Login</h2>
+    <input id="adminUser" type="text" placeholder="Usuário" />
+    <input id="adminPassword" type="password" placeholder="Senha" />
     <button id="btnLogin">Entrar</button>
-    <p id="loginError" style="color:red;display:none;">Senha incorreta!</p>
+    <p id="loginError" style="display:none;color:red;">Usuário ou senha inválidos</p>
   </div>
+
 
   <!-- PAINEL -->
   <div id="adminPanel" style="display:none;">

@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
+const bcrypt = require("bcrypt");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,31 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
 });
+
+// ===================== LOGIN ===================== //
+app.post("/login", async (req, res) => {
+  try {
+    const { usuario, senha } = req.body;
+    const [rows] = await pool.query("SELECT * FROM admin WHERE usuario = ?", [usuario]);
+
+    if (rows.length === 0) {
+      return res.status(401).json({ error: "Usuário ou senha inválidos" });
+    }
+
+    const admin = rows[0];
+    const senhaOk = await bcrypt.compare(senha, admin.senha);
+    if (!senhaOk) {
+      return res.status(401).json({ error: "Usuário ou senha inválidos" });
+    }
+
+    // Aqui você poderia gerar token JWT (mais seguro), mas pra simplificar:
+    res.json({ msg: "Login OK" });
+  } catch (err) {
+    console.error("Erro no login:", err);
+    res.status(500).json({ error: "Erro no login" });
+  }
+});
+
 
 app.use(cors());
 app.use(express.json());

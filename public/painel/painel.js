@@ -3,8 +3,6 @@ const API_BASE = window.location.origin.includes("localhost")
   ? "http://localhost:3000"
   : "https://db-peladinha.onrender.com";
 
-const SENHA = "palmasleague4321"; // simples para começar
-
 // ===== STATE =====
 let jogadores = [];
 let estatisticasRodada = {}; // { nomeJogador: {gols,assistencias,titulos,nota} }
@@ -13,17 +11,33 @@ let rodadaData = "";
 // ===== LOGIN =====
 const loginScreen = document.getElementById("loginScreen");
 const adminPanel = document.getElementById("adminPanel");
-document.getElementById("btnLogin").addEventListener("click", () => {
-    const pass = document.getElementById("adminPassword").value;
-    if (pass === SENHA) {
-        document.getElementById("loginError").style.display = "none";
-        loginScreen.style.display = "none";
-        adminPanel.style.display = "block";
-        boot();
-    } else {
-        document.getElementById("loginError").style.display = "block";
+document.getElementById("btnLogin").addEventListener("click", async () => {
+  const usuario = document.getElementById("adminUser").value;
+  const senha = document.getElementById("adminPassword").value;
+
+  try {
+    const r = await fetch(`${API_BASE}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usuario, senha }),
+    });
+
+    if (!r.ok) {
+      document.getElementById("loginError").style.display = "block";
+      return;
     }
+
+    // login válido
+    document.getElementById("loginError").style.display = "none";
+    loginScreen.style.display = "none";
+    adminPanel.style.display = "block";
+    boot();
+  } catch (err) {
+    console.error("Erro no login:", err);
+    document.getElementById("loginError").style.display = "block";
+  }
 });
+
 
 // ===== TABS =====
 document.querySelectorAll(".tab").forEach(tab => {
