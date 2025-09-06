@@ -11,7 +11,9 @@ let rodadaData = "";
 // ===== LOGIN =====
 const loginScreen = document.getElementById("loginScreen");
 const adminPanel = document.getElementById("adminPanel");
-document.getElementById("btnLogin").addEventListener("click", async () => {
+document.getElementById("btnLogin").addEventListener("click", async (e) => {
+  e.preventDefault(); // impede o form de recarregar a página
+
   const usuario = document.getElementById("adminUser").value;
   const senha = document.getElementById("adminPassword").value;
 
